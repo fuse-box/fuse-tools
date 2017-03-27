@@ -64,10 +64,10 @@ gulp.task('build', function() {
 });
 
 
-gulp.task('copy-to-fusebox', function() {
-    gulp.src(['dist/**/**.**']).pipe(gulp.dest("../fuse-box/node_modules/fuse-tools/dist"))
-    gulp.src(['package.json']).pipe(gulp.dest("../fuse-box/node_modules/fuse-tools"))
-});
+// gulp.task('copy-to-fusebox', function() {
+//     gulp.src(['dist/**/**.**']).pipe(gulp.dest("../fuse-box/node_modules/fuse-tools/dist"))
+//     gulp.src(['package.json']).pipe(gulp.dest("../fuse-box/node_modules/fuse-tools"))
+// });
 
 gulp.task('watch', ['dist-commonjs'], function() {
     runSequence("dist-typings", 'copy-to-fusebox');
