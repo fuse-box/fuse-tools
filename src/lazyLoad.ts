@@ -1,4 +1,5 @@
 declare const FuseBox: any;
+declare const global: any;
 
 export function xmlhttp(path: string, cb: any) {
     var xmlhttp: XMLHttpRequest = new XMLHttpRequest();
@@ -20,7 +21,7 @@ export function lazyLoad(name: string): Promise<any> {
 
     return new Promise((resolve, reject) => {
         const cfg = FuseBox.global("__fsbx__bundles__");
-        const info = cfg[name];
+        const info = cfg.bundles[name];
         let moduleFound = false;
         // resolve regular file if found
         if (!info) {
@@ -36,13 +37,25 @@ export function lazyLoad(name: string): Promise<any> {
         if (FuseBox.exists(main)) {
             return resolve(FuseBox.import(main))
         } else {
-            xmlhttp(info.file, (e, res) => {
-                if (e) {
-                    return reject(e);
-                }
-                new Function(res.responseText)();
+            if (FuseBox.isBrowser) {
+                xmlhttp(info.file, (e, res) => {
+                    if (e) {
+                        return reject(e);
+                    }
+                    new Function(res.responseText)();
+                    resolve(FuseBox.import(main));
+                });
+            } else {
+                // require using server
+                const serverPathLib = "path";
+                // making sure it's not bundled
+                const path = require(serverPathLib);
+                let target = path.resolve(cfg.server, info.file);
+                console.log(`Load ${name}  -> ${target}`);
+                require(target);
                 resolve(FuseBox.import(main));
-            });
+            }
+
         }
     });
 }   
