@@ -38,7 +38,11 @@ export function lazyLoad(name: string): Promise<any> {
             return resolve(FuseBox.import(main))
         } else {
             if (FuseBox.isBrowser) {
-                xmlhttp(info.file, (e, res) => {
+                if (!cfg.browser.match(/\/$/)) {
+                    cfg.browser += "/";
+                }
+                let targetBrowserPath = cfg.browser + info.file;
+                xmlhttp(targetBrowserPath, (e, res) => {
                     if (e) {
                         return reject(e);
                     }
